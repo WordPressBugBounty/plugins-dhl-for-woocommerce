@@ -20,14 +20,14 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://cig.dhl.de/services/production/rest/';
+	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/transportation/pickup/v3';
 
 	/**
 	 * The URL to the sandbox API.
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_SANDBOX = 'https://cig.dhl.de/services/sandbox/rest/';
+	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/transportation/pickup/v3';
 
 	/**
 	 * The API driver instance.
@@ -139,7 +139,8 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			$this->api_driver,
 			$this->get_api_url(),
 			$client_id,
-			$client_secret
+			$client_secret,
+			$this->get_api_key(),
 		);
 	}
 
@@ -440,8 +441,8 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	public function sandbox_info_customer_portal(){
 		//
 		return array(
-			'username' 	=> '2222222222_abr_0801',
-			'pass' 		=> 'S8PjmLB!s2vrzWV3o',
+			'username' 	=> 'user-valid',
+			'pass' 		=> 'SandboxPasswort2023!',
 			'account_no'=> '22222222220801',
 		);
 	}
