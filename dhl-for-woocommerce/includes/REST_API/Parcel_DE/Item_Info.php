@@ -634,7 +634,8 @@ class Item_Info {
 				},
 			),
 			'dhl_postnum' => array(
-				'rename' => 'postNumber',
+				'default' => '',
+				'rename'  => 'postNumber',
 			),
 			'address_1'   => array(
 				'rename'   => 'retailID',
@@ -838,8 +839,12 @@ class Item_Info {
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
 
-		if ( 'kg' === $uom || 'g' === $uom ) {
-			return round( $weight, 2 );
+		if ( 'kg' === $uom ) {
+			return round( $weight, 3 );
+		}
+
+		if ( 'g' === $uom ) {
+			return (int) ceil( $weight );
 		}
 
 		switch ( $uom ) {
