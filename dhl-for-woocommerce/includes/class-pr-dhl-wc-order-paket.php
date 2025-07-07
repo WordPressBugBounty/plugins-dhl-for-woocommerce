@@ -338,7 +338,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
-
 					woocommerce_wp_checkbox(
 						array(
 							'id'                => 'pr_dhl_identcheck',
@@ -429,11 +428,21 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
+                    woocommerce_wp_checkbox(
+                        array(
+                            'id'                => 'pr_dhl_go_green_plus',
+                            'label'             => esc_html__( 'GoGreen Plus:', 'dhl-for-woocommerce' ),
+                            'placeholder'       => '',
+                            'description'       => '',
+                            'value'             => isset( $dhl_label_items['pr_dhl_go_green_plus'] ) ? $dhl_label_items['pr_dhl_go_green_plus'] : $this->shipping_dhl_settings['dhl_default_go_green_plus'],
+                            'custom_attributes' => array( $is_disabled => $is_disabled ),
+                        )
+                    );
 				echo '</div>'; // END -- Additional Services
 
 			} else { // Non-domestic shipment
 
-				// Outside EU
+				// Outside EU.
 				if ( $this->is_crossborder_shipment( $order_id ) ) {
 
 					echo '<div class="shipment-dhl-row-container shipment-dhl-row-non-domestic">';
@@ -454,7 +463,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						);
 					}
 
-					// Duties drop down
+					// Duties drop down.
 					$duties_opt = $dhl_obj->get_dhl_duties();
 					woocommerce_wp_select(
 						array(
@@ -467,17 +476,32 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-						woocommerce_wp_text_input(
-							array(
-								'id'                => 'pr_dhl_invoice_num',
-								'class'             => '',
-								'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
-								'placeholder'       => '',
-								'description'       => '',
-								'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
-							)
-						);
+					woocommerce_wp_text_input(
+						array(
+							'id'                => 'pr_dhl_invoice_num',
+							'class'             => '',
+							'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
+					// MRN, Required for DHL Paket International to Switzerland and DHL Europaket to all customs destinations.
+					woocommerce_wp_text_input( array(
+						'id'                => 'pr_dhl_mrn',
+						'label'             => esc_html__( 'Movement Reference Number (MRN):', 'dhl-for-woocommerce' ),
+						'placeholder'       => '25DE1234567890ABCDE',
+						'description'       => '',
+						'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
+						'custom_attributes' => array(
+							'maxlength'  => 18,
+							'pattern'    => '[0-9A-Z]{18}',
+							$is_disabled => $is_disabled,
+						),
+					) );
+
 					echo '</div>'; // END -- Non Domestic
 				}
 
@@ -670,7 +694,52 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		 * Function for saving tracking items
 		 */
 		public function get_additional_meta_ids() {
-			return array( 'pr_dhl_signature_service', 'pr_dhl_endorsement', 'pr_dhl_PDDP', 'pr_dhl_cdp_delivery', 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address', 'pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
+			return array(
+				'pr_dhl_signature_service',
+				'pr_dhl_endorsement',
+				'pr_dhl_PDDP',
+				'pr_dhl_cdp_delivery',
+				'pr_dhl_cod_value',
+				'pr_dhl_preferred_day',
+				'pr_dhl_preferred_location',
+				'pr_dhl_preferred_neighbor',
+				'pr_dhl_duties',
+				'pr_dhl_age_visual',
+				'pr_dhl_email_notification',
+				'pr_dhl_additional_insurance',
+				'pr_dhl_personally',
+				'pr_dhl_no_neighbor',
+				'pr_dhl_named_person',
+				'pr_dhl_premium',
+				'pr_dhl_bulky_goods',
+				'pr_dhl_is_codeable',
+				'pr_dhl_identcheck',
+				'pr_dhl_identcheck_dob',
+				'pr_dhl_identcheck_age',
+				'pr_dhl_return_address_enabled',
+				'pr_dhl_return_name',
+				'pr_dhl_return_company',
+				'pr_dhl_return_address',
+				'pr_dhl_return_address_no',
+				'pr_dhl_return_address_city',
+				'pr_dhl_return_address_state',
+				'pr_dhl_return_address_zip',
+				'pr_dhl_return_phone',
+				'pr_dhl_return_email',
+				'pr_dhl_routing',
+				'pr_dhl_routing_email',
+				'pr_dhl_total_packages',
+				'pr_dhl_multi_packages_enabled',
+				'pr_dhl_packages_number',
+				'pr_dhl_packages_weight',
+				'pr_dhl_packages_length',
+				'pr_dhl_packages_width',
+				'pr_dhl_packages_height',
+				'pr_dhl_invoice_num',
+				'pr_dhl_description',
+				'pr_dhl_mrn',
+				'pr_dhl_go_green_plus',
+			);
 		}
 
 		protected function get_tracking_url() {
@@ -869,6 +938,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_identcheck_dob',
 						'pr_dhl_routing',
 						'pr_dhl_signature_service',
+						'pr_dhl_go_green_plus',
 					);
 
 					$order = wc_get_order( $order_id );
