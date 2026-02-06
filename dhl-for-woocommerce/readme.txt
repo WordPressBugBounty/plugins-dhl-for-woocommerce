@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.4
+Stable tag: 3.9.7
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.6
-Tested up to: 6.8
-WC requires at least: 9.8
-WC tested up to: 10.0
+Tested up to: 6.9
+WC requires at least: 10.1
+WC tested up to: 10.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,6 +74,32 @@ More detailed instructions on how to set up your store and configure it are cons
 5. Blocks Checkout with DHL services.
 
 == Changelog ==
+
+= 3.9.7 =
+* Fix: Errors appear when trying to save map settings.
+* Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
+* Fix: Hide Closest drop-point delivery option on Checkout Blocks when the cart contains only virtual products.
+* Fix: Hide DHL Postnummer from frontend address formats in Checkout Blocks and Store API.
+* Fix: Preferred Location/Neighbour selection when only one of the options is enabled in DHL Paket settings.
+* Fix: Preserve DHL label selections when running WooCommerce order actions.
+* Fix: Prevent fatal error in DHL Preferred Services on Checkout Blocks caused by missing sprintf import.
+* Tweak: Hide “Drop-off location or neighbor” option when a Packstation* or DHL Branch (Postfiliale) is selected.
+* Tweak: Set the REST API as the default selection in the setup wizard.
+
+= 3.9.6 =
+* Tweak: WordPress 6.9 compatibility.
+* Fix: Remove Warenpost National.
+* Fix: Fatal error in needs_shipping() when order contains permanently deleted product.
+
+= 3.9.5 =
+* Add: Added Closest drop-point delivery (CDP) service for France.
+* Add: Postal Delivered Duty Paid (PDDP) service for United States and Puerto Rico.
+* Fix: Delivery Day UI and fee no longer appear on Checkout Blocks for virtual-only carts.
+* Fix: Checkout Blocks compatibility for the Closest Drop-Point Delivery.
+* Fix: Email template preview error.
+* Fix: Remove sensitive data from debug logs.
+* Fix: Remove DHL meta box if the order does not need shipping.
+* Tweak: WooCommerce 10.3 compatibility.
 
 = 3.9.4 =
 * Add: SOAP API deprecation notice.

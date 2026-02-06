@@ -54,11 +54,28 @@ const Block = ({
     setExtensionData(namespace, key, value);
   }, 500), [setExtensionData]);
   const debounceTimer = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const customerData = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => select(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__.CART_STORE_KEY).getCustomerData(), []);
+  const shippingAddress = customerData ? customerData.shippingAddress : null;
+  const address1Lower = (shippingAddress?.address_1 || '').toLowerCase();
+  const PACKSTATION_RE = /\bpackstation\s+\d{3}\b/i;
+  const POSTFILIALE_RE = /\bpostfiliale\s+\d{3,5}\b/i;
+  const selectedIsPackstation = PACKSTATION_RE.test(address1Lower);
+  const selectedIsBranch = POSTFILIALE_RE.test(address1Lower);
+  const isLockerOrBranch = selectedIsPackstation || selectedIsBranch;
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (isLockerOrBranch) {
+      setPreferredLocationNeighbor('none');
+      setPreferredLocation('');
+      setPreferredNeighborName('');
+      setPreferredNeighborAddress('');
+    }
+  }, [isLockerOrBranch]);
 
   // Determine availability of location and neighbor options
   const locationAvailable = dhlSettings?.preferred_location;
   const neighborAvailable = dhlSettings?.preferred_neighbour;
-  const showRadioControl = locationAvailable && neighborAvailable;
+  const allowLocationNeighborUI = !isLockerOrBranch;
+  const showRadioControl = allowLocationNeighborUI && locationAvailable && neighborAvailable;
 
   // Initialize preferredLocationNeighbor
   const initialPreferredLocationNeighbor = showRadioControl ? 'none' : locationAvailable ? 'location' : neighborAvailable ? 'neighbor' : 'none';
@@ -72,10 +89,6 @@ const Block = ({
   const [preferredLocation, setPreferredLocation] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const [preferredNeighborName, setPreferredNeighborName] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const [preferredNeighborAddress, setPreferredNeighborAddress] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('');
-
-  // Retrieve customer data
-  const customerData = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => select(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__.CART_STORE_KEY).getCustomerData(), []);
-  const shippingAddress = customerData ? customerData.shippingAddress : null;
 
   // Retrieve selected shipping methods and payment method
   const cartData = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => select(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__.CART_STORE_KEY).getCartData(), []);
@@ -246,8 +259,8 @@ const Block = ({
   }, [preferredNeighborAddress]);
 
   // Handle visibility of drop-off location and neighbor fields based on settings and selection
-  const showDropOffLocation = showRadioControl && preferredLocationNeighbor === 'location' || !showRadioControl && locationAvailable;
-  const showNeighborFields = showRadioControl && preferredLocationNeighbor === 'neighbor' || !showRadioControl && neighborAvailable;
+  const showDropOffLocation = allowLocationNeighborUI && (showRadioControl && preferredLocationNeighbor === 'location' || !showRadioControl && locationAvailable);
+  const showNeighborFields = allowLocationNeighborUI && (showRadioControl && preferredLocationNeighbor === 'neighbor' || !showRadioControl && neighborAvailable);
 
   // Update the mapping of preferredDayOptions
   let preferredDayOptions = [];
@@ -330,7 +343,7 @@ const Block = ({
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
           colSpan: "2",
           children: dhlSettings?.preferred_day_cost && parseFloat(dhlSettings.preferred_day_cost) > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-            children: sprintf((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce'), wcPrice(parseFloat(dhlSettings.preferred_day_cost)))
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.sprintf)((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce'), wcPrice(parseFloat(dhlSettings.preferred_day_cost)))
           }) : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('There is a surcharge for this service.', 'dhl-for-woocommerce')
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {

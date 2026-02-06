@@ -3,7 +3,7 @@
         'name' => 'pr/dhl-logistic-services-woocommerce',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '96084ac84b80332cd1b95401d610e8b94d9d837f',
+        'reference' => '35e700c0bbafd99b8e3c126bff825b59c7afe618',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'pr/dhl-logistic-services-woocommerce' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '96084ac84b80332cd1b95401d610e8b94d9d837f',
+            'reference' => '35e700c0bbafd99b8e3c126bff825b59c7afe618',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

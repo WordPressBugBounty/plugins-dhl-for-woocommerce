@@ -39,7 +39,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		public function init_hooks() {
-			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20, 2 );
 			add_action( 'woocommerce_process_shop_order_meta', array( $this, 'save_meta_box' ), 0, 2 );
 
 			// Order page metabox actions
@@ -78,11 +78,34 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
+         * Init order object for meta box.
+         *
+         * @param WP_POST|WC_Order $metabox_object Either WP_Post or WC_Order object.
+         */
+		public function init_order_object( $metabox_object ) {
+			if ( is_a( $metabox_object, 'WP_Post' ) ) {
+				return wc_get_order( $metabox_object->ID );
+			}
+
+			if ( is_a( $metabox_object, 'WC_Order' ) ) {
+				return $metabox_object;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Add the meta box for shipment info on the order page
 		 *
 		 * @access public
 		 */
-		public function add_meta_box() {
+        public function add_meta_box( $post_type, $post_or_order_object ) {
+			$order = $this->init_order_object( $post_or_order_object );
+
+			if ( ! is_a( $order, 'WC_Order' ) || ! API_Utils::order_needs_shipping( $order ) ) {
+				return;
+			}
+
 			$screen = API_Utils::is_HPOS() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
 			add_meta_box(
 				'woocommerce-shipment-dhl-label',
@@ -101,7 +124,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @access public
 		 */
 		public function meta_box( $post_or_order_object ) {
-			$order    = ( $post_or_order_object instanceof WC_Order ) ? $post_or_order_object : wc_get_order( $post_or_order_object );
+            $order    = $this->init_order_object( $post_or_order_object );
 			$order_id = $order->get_id();
 
 			// Get saved label input fields or set default values
@@ -236,30 +259,41 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		public function save_meta_box( $post_id, $post = null ) {
 
-			// Do nothing if it's not an order.
-			$screen = get_current_screen();
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 			if ( ! empty( $screen ) ) {
-				if ( 'shop_order' !== $screen->post_type ) {
+				if ( isset( $screen->post_type ) && 'shop_order' !== $screen->post_type ) {
 					return;
 				}
 			}
 
-			// loop through inputs within id 'shipment-dhl-label-form'
+			if ( empty( $_POST['pr_dhl_label_nonce'] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_text_field( wp_unslash( $_POST['pr_dhl_label_nonce'] ) );
+
+			if ( ! wp_verify_nonce( $nonce, 'create-dhl-label' ) ) {
+				return;
+			}
+
 			$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight' );
 
 			$additional_meta_box_ids = $this->get_additional_meta_ids();
-			$meta_box_ids            = array_merge( $meta_box_ids, $additional_meta_box_ids );
-			foreach ( $meta_box_ids as $key => $value ) {
-				// Save value if it exists
+			if ( is_array( $additional_meta_box_ids ) && ! empty( $additional_meta_box_ids ) ) {
+				$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
+			}
+
+			$args = array();
+
+			foreach ( $meta_box_ids as $value ) {
 				if ( isset( $_POST[ $value ] ) ) {
 					$args[ $value ] = wc_clean( $_POST[ $value ] );
-				} else {
-					$args[ $value ] = '';
 				}
 			}
 
-			if ( isset( $args ) ) {
+			if ( ! empty( $args ) ) {
 				$this->save_dhl_label_items( $post_id, $args );
+
 				return $args;
 			}
 		}
@@ -639,6 +673,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 */
 		public function get_dhl_label_items( $order_id ) {
 			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return array();
+			}
+			
 			return $order->get_meta( '_pr_shipment_dhl_label_items' );
 		}
 

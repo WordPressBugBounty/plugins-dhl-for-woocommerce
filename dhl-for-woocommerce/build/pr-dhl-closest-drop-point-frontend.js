@@ -2,6 +2,168 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./includes/checkout-blocks/dhl-closest-drop-point/block.js":
+/*!******************************************************************!*\
+  !*** ./includes/checkout-blocks/dhl-closest-drop-point/block.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Block: () => (/* binding */ Block)
+/* harmony export */ });
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @woocommerce/block-data */ "@woocommerce/block-data");
+/* harmony import */ var _woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+
+const Block = ({
+  checkoutExtensionData
+}) => {
+  const {
+    setExtensionData
+  } = checkoutExtensionData;
+
+  // Access the localized data from prDhlGlobals
+  const imgUrl = prDhlGlobals?.pluginUrl + "/assets/img/dhl-official.png";
+  const dhlSettings = prDhlGlobals.dhlSettings;
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [closestDP, setClosestDP] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('no');
+  const [displayClosest, setDisplayClosest] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const closestAvailable = dhlSettings?.closest_drop_point;
+  const validCountries = prDhlGlobals?.valid_countries || [];
+
+  // Retrieve customer data
+  const customerData = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => select(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__.CART_STORE_KEY).getCustomerData(), []);
+  const shippingAddress = customerData ? customerData.shippingAddress : null;
+
+  // Debounce for reducing the number of updates to the extension data
+  const debouncedSetExtensionData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)((0,lodash__WEBPACK_IMPORTED_MODULE_4__.debounce)((namespace, key, value) => {
+    setExtensionData(namespace, key, value);
+  }, 500), [setExtensionData]);
+  const cart = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => select(_woocommerce_block_data__WEBPACK_IMPORTED_MODULE_3__.CART_STORE_KEY).getCartData(), []) || {};
+  const cartNeedsShipping = cart.needsShipping === true;
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!shippingAddress || !closestAvailable || !validCountries.includes(shippingAddress.country)) {
+      setDisplayClosest(false);
+      return;
+    } else {
+      setDisplayClosest(true);
+      return;
+    }
+  }, [shippingAddress, closestAvailable]);
+
+  // useEffect for closestDP
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    setExtensionData('pr-dhl', 'closest_drop_point', closestDP);
+    debouncedSetExtensionData('pr-dhl', 'closest_drop_point', closestDP);
+  }, [closestDP]);
+  if (cartNeedsShipping === false) {
+    return null;
+  }
+  if (!displayClosest) {
+    return null;
+  }
+  if (error) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Notice, {
+      status: "error",
+      isDismissible: false,
+      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)(error, 'dhl-for-woocommerce')
+    });
+  }
+
+  // Render DHL logo dynamically from the localized data
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("table", {
+    className: "dhl-co-table",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("tbody", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
+        className: "dhl-co-tr dhl-co-tr-first",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+          colSpan: 2,
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("img", {
+            src: imgUrl,
+            alt: "DHL logo",
+            className: "dhl-co-logo"
+          })
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
+        className: "dhl-co-tr",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("th", {
+          colSpan: 2,
+          children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Closest drop-off point', 'dhl-for-woocommerce'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("hr", {})]
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
+        className: "dhl-co-tr",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+          colSpan: 2,
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Preferred delivery to a parcel shop/parcel locker close to the specified home address', 'dhl-for-woocommerce')
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("tr", {
+        className: "dhl-co-tr",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
+          className: "dhl-cdp",
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Delivery option', 'dhl-for-woocommerce')
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+          className: "dhl-cdp",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("ul", {
+            className: "dhl-preferred-location",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("li", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                defaultChecked: true,
+                type: "radio",
+                name: "pr_dhl_cdp_delivery",
+                "data-index": 0,
+                id: "dhl_home_deliver_option",
+                value: "no",
+                className: "",
+                onChange: e => setClosestDP(e.target.value)
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                htmlFor: "dhl_home_deliver_option",
+                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Home delivery', 'dhl-for-woocommerce')
+              })]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("li", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                type: "radio",
+                name: "pr_dhl_cdp_delivery",
+                "data-index": 0,
+                id: "dhl_cdp_option",
+                value: "yes",
+                className: "",
+                onChange: e => setClosestDP(e.target.value)
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                htmlFor: "dhl_cdp_option",
+                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Closest Drop Point', 'dhl-for-woocommerce')
+              })]
+            })]
+          })
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
+        className: "dhl-co-tr dhl-co-tr-last",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+          colSpan: 2
+        })
+      })]
+    })
+  });
+};
+
+/***/ }),
+
 /***/ "./includes/checkout-blocks/dhl-closest-drop-point/block.json":
 /*!********************************************************************!*\
   !*** ./includes/checkout-blocks/dhl-closest-drop-point/block.json ***!
@@ -9,508 +171,6 @@
 /***/ ((module) => {
 
 module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"pr-dhl/dhl-closest-drop-point","version":"1.0.0","title":"DHL Order Block","category":"woocommerce","description":"Adds DHL block to checkout.","supports":{"html":false,"align":true,"multiple":false,"reusable":false},"parent":["woocommerce/checkout-order-summary-block"],"attributes":{"lock":{"type":"object","default":{"remove":true,"move":true}},"mainTitle":{"type":"string","default":"Closest drop-off point."},"infoText":{"type":"string","default":"Preferred delivery to a parcel shop/parcel locker close to the specified home address."},"homeDeliveryLabel":{"type":"string","default":"Home delivery"},"closestDropPointLabel":{"type":"string","default":"Closest Drop Point"}},"textdomain":"dhl-for-woocommerce","editorStyle":"file:../../../build/style-dhl-closest-drop-point.css"}');
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-closest-drop-point/edit.js":
-/*!*****************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-closest-drop-point/edit.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Edit: () => (/* binding */ Edit),
-/* harmony export */   Save: () => (/* binding */ Save)
-/* harmony export */ });
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @woocommerce/settings */ "@woocommerce/settings");
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./includes/checkout-blocks/dhl-closest-drop-point/style.scss");
-/**
- * External dependencies
- */
-
-
-
-
-
-/**
- * Internal dependencies
- */
-
-const Edit = ({
-  attributes,
-  setAttributes
-}) => {
-  return null;
-};
-const Save = ({
-  attributes
-}) => {
-  return null;
-};
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-closest-drop-point/index.js":
-/*!******************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-closest-drop-point/index.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/box.js");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit */ "./includes/checkout-blocks/dhl-closest-drop-point/edit.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./block.json */ "./includes/checkout-blocks/dhl-closest-drop-point/block.json");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/**
- * External dependencies
- */
-
-
-
-/**
- * Internal dependencies
- */
-
-
-
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_2__, {
-  icon: {
-    src: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
-      icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"]
-    })
-  },
-  edit: _edit__WEBPACK_IMPORTED_MODULE_1__.Edit,
-  save: _edit__WEBPACK_IMPORTED_MODULE_1__.Save
-});
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-closest-drop-point/style.scss":
-/*!********************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-closest-drop-point/style.scss ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-parcel-finder/block.json":
-/*!***************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-parcel-finder/block.json ***!
-  \***************************************************************/
-/***/ ((module) => {
-
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"pr-dhl/dhl-parcel-finder","version":"1.0.0","title":"DHL Order Block","category":"woocommerce","description":"Adds DHL block to checkout.","supports":{"html":false,"align":true,"multiple":false,"reusable":false},"parent":["woocommerce/checkout-contact-information-block"],"attributes":{"lock":{"type":"object","default":{"remove":true,"move":true}},"addressType":{"type":"object","default":""},"dhlPostnum":{"type":"string","default":""},"pfPostcode":{"type":"string","default":""},"pfCity":{"type":"string","default":""},"pfAddress":{"type":"string","default":""}},"textdomain":"dhl-for-woocommerce","editorStyle":"file:../../../build/style-dhl-preferred-services.css"}');
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-parcel-finder/edit.js":
-/*!************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-parcel-finder/edit.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Edit: () => (/* binding */ Edit),
-/* harmony export */   Save: () => (/* binding */ Save)
-/* harmony export */ });
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @woocommerce/settings */ "@woocommerce/settings");
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./includes/checkout-blocks/dhl-parcel-finder/style.scss");
-/**
- * External dependencies
- */
-
-
-
-
-
-/**
- * Internal dependencies
- */
-
-const Edit = ({
-  attributes,
-  setAttributes
-}) => {
-  return null;
-};
-const Save = ({
-  attributes
-}) => {
-  return null;
-};
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-parcel-finder/index.js":
-/*!*************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-parcel-finder/index.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/box.js");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit */ "./includes/checkout-blocks/dhl-parcel-finder/edit.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./block.json */ "./includes/checkout-blocks/dhl-parcel-finder/block.json");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/**
- * External dependencies
- */
-
-
-
-/**
- * Internal dependencies
- */
-
-
-
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_2__, {
-  icon: {
-    src: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
-      icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"]
-    })
-  },
-  edit: _edit__WEBPACK_IMPORTED_MODULE_1__.Edit,
-  save: _edit__WEBPACK_IMPORTED_MODULE_1__.Save
-});
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-parcel-finder/style.scss":
-/*!***************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-parcel-finder/style.scss ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-preferred-services/block.json":
-/*!********************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-preferred-services/block.json ***!
-  \********************************************************************/
-/***/ ((module) => {
-
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"pr-dhl/dhl-preferred-services","version":"1.0.0","title":"DHL Order Block","category":"woocommerce","description":"Adds DHL block to checkout.","supports":{"html":false,"align":true,"multiple":false,"reusable":false},"parent":["woocommerce/checkout-order-summary-block"],"attributes":{"lock":{"type":"object","default":{"remove":true,"move":true}},"preferredDay":{"type":"string","default":""},"preferredLocationNeighbor":{"type":"string","default":""},"preferredLocation":{"type":"string","default":""},"preferredNeighborName":{"type":"string","default":""},"preferredNeighborAddress":{"type":"string","default":""},"mainTitle":{"type":"string","default":"DHL Preferred Delivery. Delivered just as you wish."},"infoText":{"type":"string","default":"Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels. Please choose your preferred delivery option."},"deliveryDayLabel":{"type":"string","default":"Delivery day: Delivery at your preferred day ?"},"dropOffOrNeighborLabel":{"type":"string","default":"Drop-off location or neighbor"},"dropOffLocationLabel":{"type":"string","default":"Drop-off location: Delivery to your preferred drop-off location"},"neighborLabel":{"type":"string","default":"Neighbour: Delivery to a neighbour of your choice"}},"textdomain":"dhl-for-woocommerce","editorStyle":"file:../../../build/style-dhl-preferred-services.css"}');
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-preferred-services/edit.js":
-/*!*****************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-preferred-services/edit.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Edit: () => (/* binding */ Edit),
-/* harmony export */   Save: () => (/* binding */ Save)
-/* harmony export */ });
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @woocommerce/settings */ "@woocommerce/settings");
-/* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./includes/checkout-blocks/dhl-preferred-services/style.scss");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/**
- * External dependencies
- */
-
-
-
-
-
-/**
- * Internal dependencies
- */
-
-
-const {
-  defaultLabelText
-} = (0,_woocommerce_settings__WEBPACK_IMPORTED_MODULE_3__.getSetting)('pr-dhl_data', '');
-const Edit = ({
-  attributes,
-  setAttributes
-}) => {
-  const {
-    mainTitle,
-    infoText,
-    deliveryDayLabel,
-    dropOffOrNeighborLabel,
-    dropOffLocationLabel,
-    neighborLabel
-  } = attributes;
-  const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-    ...blockProps,
-    style: {
-      display: 'block'
-    },
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('DHL Block Options', 'dhl-for-woocommerce')
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: mainTitle || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('DHL Preferred Delivery. Delivered just as you wish.', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          mainTitle: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: infoText || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Thanks to the ﬂexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels.', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          infoText: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: deliveryDayLabel || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Delivery day: Delivery at your preferred day ', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          deliveryDayLabel: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
-          label: deliveryDayLabel,
-          options: []
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: dropOffOrNeighborLabel || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Drop-off location or neighbor', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          dropOffOrNeighborLabel: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.RadioControl, {
-          label: dropOffOrNeighborLabel,
-          options: [{
-            label: 'None',
-            value: 'none'
-          }, {
-            label: 'Location',
-            value: 'location'
-          }, {
-            label: 'Neighbor',
-            value: 'neighbor'
-          }]
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: dropOffLocationLabel || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Drop-off location: Delivery to your preferred drop-off location ', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          dropOffLocationLabel: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          placholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('e.g. Garage, Terrace', 'dhl-for-woocommerce')
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
-        value: neighborLabel || defaultLabelText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Neighbour: Delivery to a neighbour of your choice ', 'dhl-for-woocommerce'),
-        onChange: value => setAttributes({
-          neighborLabel: value
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          placholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('First name, last name of neighbour', 'dhl-for-woocommerce')
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          placholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Street, number, postal code, city', 'dhl-for-woocommerce')
-        })
-      })]
-    })]
-  });
-};
-const Save = ({
-  attributes
-}) => {
-  return null;
-};
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-preferred-services/index.js":
-/*!******************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-preferred-services/index.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/box.js");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit */ "./includes/checkout-blocks/dhl-preferred-services/edit.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./block.json */ "./includes/checkout-blocks/dhl-preferred-services/block.json");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/**
- * External dependencies
- */
-
-
-
-/**
- * Internal dependencies
- */
-
-
-
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_2__, {
-  icon: {
-    src: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
-      icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"]
-    })
-  },
-  edit: _edit__WEBPACK_IMPORTED_MODULE_1__.Edit,
-  save: _edit__WEBPACK_IMPORTED_MODULE_1__.Save
-});
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/dhl-preferred-services/style.scss":
-/*!********************************************************************!*\
-  !*** ./includes/checkout-blocks/dhl-preferred-services/style.scss ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "./includes/checkout-blocks/index.js":
-/*!*******************************************!*\
-  !*** ./includes/checkout-blocks/index.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/plugins */ "@wordpress/plugins");
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _dhl_preferred_services__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dhl-preferred-services */ "./includes/checkout-blocks/dhl-preferred-services/index.js");
-/* harmony import */ var _dhl_parcel_finder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dhl-parcel-finder */ "./includes/checkout-blocks/dhl-parcel-finder/index.js");
-/* harmony import */ var _dhl_closest_drop_point__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dhl-closest-drop-point */ "./includes/checkout-blocks/dhl-closest-drop-point/index.js");
-/**
- * External dependencies
- */
-
-
-// Import block definitions
-
-
-
-const render = () => {};
-(0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_0__.registerPlugin)('pr-dhl', {
-  render,
-  scope: 'woocommerce-checkout'
-});
-
-/***/ }),
-
-/***/ "./node_modules/@wordpress/icons/build-module/icon/index.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/@wordpress/icons/build-module/icon/index.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/**
- * WordPress dependencies
- */
-
-
-/** @typedef {{icon: JSX.Element, size?: number} & import('@wordpress/primitives').SVGProps} IconProps */
-
-/**
- * Return an SVG icon.
- *
- * @param {IconProps}                                 props icon is the SVG component to render
- *                                                          size is a number specifiying the icon size in pixels
- *                                                          Other props will be passed to wrapped SVG component
- * @param {import('react').ForwardedRef<HTMLElement>} ref   The forwarded ref to the SVG element.
- *
- * @return {JSX.Element}  Icon component
- */
-function Icon({
-  icon,
-  size = 24,
-  ...props
-}, ref) {
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.cloneElement)(icon, {
-    width: size,
-    height: size,
-    ...props,
-    ref
-  });
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.forwardRef)(Icon));
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ "./node_modules/@wordpress/icons/build-module/library/box.js":
-/*!*******************************************************************!*\
-  !*** ./node_modules/@wordpress/icons/build-module/library/box.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/primitives */ "@wordpress/primitives");
-/* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__);
-
-/**
- * WordPress dependencies
- */
-
-const box = (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__.SVG, {
-  xmlns: "http://www.w3.org/2000/svg",
-  viewBox: "0 0 24 24"
-}, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__.Path, {
-  fillRule: "evenodd",
-  d: "M5 5.5h14a.5.5 0 01.5.5v1.5a.5.5 0 01-.5.5H5a.5.5 0 01-.5-.5V6a.5.5 0 01.5-.5zM4 9.232A2 2 0 013 7.5V6a2 2 0 012-2h14a2 2 0 012 2v1.5a2 2 0 01-1 1.732V18a2 2 0 01-2 2H6a2 2 0 01-2-2V9.232zm1.5.268V18a.5.5 0 00.5.5h12a.5.5 0 00.5-.5V9.5h-13z",
-  clipRule: "evenodd"
-}));
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (box);
-//# sourceMappingURL=box.js.map
 
 /***/ }),
 
@@ -1872,33 +1532,23 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "@woocommerce/settings":
-/*!************************************!*\
-  !*** external ["wc","wcSettings"] ***!
-  \************************************/
+/***/ "@woocommerce/block-data":
+/*!**************************************!*\
+  !*** external ["wc","wcBlocksData"] ***!
+  \**************************************/
 /***/ ((module) => {
 
-module.exports = window["wc"]["wcSettings"];
+module.exports = window["wc"]["wcBlocksData"];
 
 /***/ }),
 
-/***/ "@wordpress/block-editor":
-/*!*************************************!*\
-  !*** external ["wp","blockEditor"] ***!
-  \*************************************/
+/***/ "@woocommerce/blocks-checkout":
+/*!****************************************!*\
+  !*** external ["wc","blocksCheckout"] ***!
+  \****************************************/
 /***/ ((module) => {
 
-module.exports = window["wp"]["blockEditor"];
-
-/***/ }),
-
-/***/ "@wordpress/blocks":
-/*!********************************!*\
-  !*** external ["wp","blocks"] ***!
-  \********************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["blocks"];
+module.exports = window["wc"]["blocksCheckout"];
 
 /***/ }),
 
@@ -1909,6 +1559,16 @@ module.exports = window["wp"]["blocks"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["components"];
+
+/***/ }),
+
+/***/ "@wordpress/data":
+/*!******************************!*\
+  !*** external ["wp","data"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["data"];
 
 /***/ }),
 
@@ -1932,23 +1592,13 @@ module.exports = window["wp"]["i18n"];
 
 /***/ }),
 
-/***/ "@wordpress/plugins":
-/*!*********************************!*\
-  !*** external ["wp","plugins"] ***!
-  \*********************************/
+/***/ "lodash":
+/*!*************************!*\
+  !*** external "lodash" ***!
+  \*************************/
 /***/ ((module) => {
 
-module.exports = window["wp"]["plugins"];
-
-/***/ }),
-
-/***/ "@wordpress/primitives":
-/*!************************************!*\
-  !*** external ["wp","primitives"] ***!
-  \************************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["primitives"];
+module.exports = window["lodash"];
 
 /***/ }),
 
@@ -1988,42 +1638,7 @@ module.exports = window["React"];
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/chunk loaded */
-/******/ 	(() => {
-/******/ 		var deferred = [];
-/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
-/******/ 			if(chunkIds) {
-/******/ 				priority = priority || 0;
-/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
-/******/ 				deferred[i] = [chunkIds, fn, priority];
-/******/ 				return;
-/******/ 			}
-/******/ 			var notFulfilled = Infinity;
-/******/ 			for (var i = 0; i < deferred.length; i++) {
-/******/ 				var [chunkIds, fn, priority] = deferred[i];
-/******/ 				var fulfilled = true;
-/******/ 				for (var j = 0; j < chunkIds.length; j++) {
-/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
-/******/ 						chunkIds.splice(j--, 1);
-/******/ 					} else {
-/******/ 						fulfilled = false;
-/******/ 						if(priority < notFulfilled) notFulfilled = priority;
-/******/ 					}
-/******/ 				}
-/******/ 				if(fulfilled) {
-/******/ 					deferred.splice(i--, 1)
-/******/ 					var r = fn();
-/******/ 					if (r !== undefined) result = r;
-/******/ 				}
-/******/ 			}
-/******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -2064,68 +1679,33 @@ module.exports = window["React"];
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"index": 0,
-/******/ 			"./style-index": 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 			return __webpack_require__.O(result);
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkdhl_for_woocommerce"] = globalThis["webpackChunkdhl_for_woocommerce"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/ 	})();
-/******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-index"], () => (__webpack_require__("./includes/checkout-blocks/index.js")))
-/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
-/******/ 	
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+/*!*********************************************************************!*\
+  !*** ./includes/checkout-blocks/dhl-closest-drop-point/frontend.js ***!
+  \*********************************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _woocommerce_blocks_checkout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @woocommerce/blocks-checkout */ "@woocommerce/blocks-checkout");
+/* harmony import */ var _woocommerce_blocks_checkout__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_blocks_checkout__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _block__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./block */ "./includes/checkout-blocks/dhl-closest-drop-point/block.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./block.json */ "./includes/checkout-blocks/dhl-closest-drop-point/block.json");
+/**
+ * External dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+(0,_woocommerce_blocks_checkout__WEBPACK_IMPORTED_MODULE_0__.registerCheckoutBlock)({
+  metadata: _block_json__WEBPACK_IMPORTED_MODULE_2__,
+  component: _block__WEBPACK_IMPORTED_MODULE_1__.Block
+});
+})();
+
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=pr-dhl-closest-drop-point-frontend.js.map
