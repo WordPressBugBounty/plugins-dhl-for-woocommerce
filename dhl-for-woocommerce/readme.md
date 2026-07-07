@@ -1,7 +1,7 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.8
+Stable tag: 4.0.0
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.8
@@ -66,6 +66,17 @@ More detailed instructions on how to set up your store and configure it are cons
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+
+= 4.0.0 =
+* Drop SOAP API support.
+* Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
+* Add: One-time admin notice after the SOAP removal prompting stores that were on SOAP to confirm their REST API credentials.
+* Add: Option to save the DHL return label as a separate PDF that can be downloaded on its own from the order.
+* Add: Option to email the return label to the customer.
+* Fix: Correct the DHL Pickup v3 API endpoint so pickup requests no longer fail for all accounts.
+* Fix: Require a full 10-digit HS code (HTSUS) for shipments to the United States, with a clear error shown before the label is created.
+* Fix: False "DHL account password will expire in less than 30 days" warning after refreshing account settings.
+* Fix: No longer logs an "Undefined array key PDDP" PHP warning during label creation.
 
 = 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.

@@ -8,6 +8,30 @@ jQuery( document ).ready( function () {
 
 			jQuery( '#woocommerce_pr_dhl_paket_dhl_display_google_maps' ).on( 'change', this.display_map_fields )
 			this.display_map_fields()
+
+			jQuery( '#woocommerce_pr_dhl_paket_dhl_split_return_label' ).on( 'change', this.display_return_label_email_fields )
+			jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label' ).on( 'change', this.display_return_label_email_fields )
+			this.display_return_label_email_fields()
+		},
+
+		display_return_label_email_fields: function () {
+			var split_enabled = jQuery( '#woocommerce_pr_dhl_paket_dhl_split_return_label' ).is( ':checked' )
+			var email_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label' )
+			var email_select_row = jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label_email' ).closest( 'tr' )
+
+			// Emailing the return label needs the separate return label PDF, so it can
+			// only be enabled when "Save the return label as a separate PDF" is on.
+			if ( split_enabled ) {
+				email_checkbox.prop( 'disabled', false )
+			} else {
+				email_checkbox.prop( 'checked', false ).prop( 'disabled', true )
+			}
+
+			if ( email_checkbox.is( ':checked' ) ) {
+				email_select_row.show()
+			} else {
+				email_select_row.hide()
+			}
 		},
 
 
@@ -35,15 +59,10 @@ jQuery( document ).ready( function () {
 	dhl_settings.init()
 
 	var sandbox_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_sandbox' )
-	var api_mode = jQuery( '#woocommerce_pr_dhl_paket_dhl_default_api' )
 	DHLSandboxEnabled( sandbox_checkbox )
 
 	sandbox_checkbox.on( 'click', function ( evt ) {
 		DHLSandboxEnabled( jQuery( this ) )
-	} )
-
-	api_mode.on( 'change', () => {
-		DHLSandboxEnabled( sandbox_checkbox )
 	} )
 
 	var logo_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_add_logo' )
@@ -75,38 +94,15 @@ function DHLSandboxEnabled( sandbox_checkbox ) {
 	var api_settings_username = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_user' )
 	var api_settings_password = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_pwd' )
 	var account_number = jQuery( '#woocommerce_pr_dhl_paket_dhl_account_num' )
-	var api_mode = jQuery( '#woocommerce_pr_dhl_paket_dhl_default_api' )
-
-	var api_sandbox_username = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_sandbox_user' )
-	var api_sandbox_password = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_sandbox_pwd' )
-	var tr_sandbox_username = api_sandbox_username.closest( 'tr' )
-	var tr_sandbox_password = api_sandbox_password.closest( 'tr' )
 
 	if ( sandbox_checkbox.prop( 'checked' ) === true ) {
-
-		// api_settings_username.val( dhl_paket_settings_obj.username );
-		// api_settings_password.val( dhl_paket_settings_obj.pass );
-		// account_number.val( dhl_paket_settings_obj.account_no );
-
 		api_settings_username.prop( 'readonly', true )
 		api_settings_password.prop( 'readonly', true )
 		account_number.prop( 'readonly', true )
-
-		if ( 'soap' === api_mode.val() ) {
-			tr_sandbox_username.show()
-			tr_sandbox_password.show()
-		} else {
-			tr_sandbox_username.hide()
-			tr_sandbox_password.hide()
-		}
-
 	} else {
 		api_settings_username.prop( 'readonly', false )
 		api_settings_password.prop( 'readonly', false )
 		account_number.prop( 'readonly', false )
-
-		tr_sandbox_username.hide()
-		tr_sandbox_password.hide()
 	}
 }
 
