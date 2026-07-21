@@ -1,7 +1,7 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.8
@@ -66,6 +66,10 @@ More detailed instructions on how to set up your store and configure it are cons
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+
+= 4.0.1 =
+* Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
+* Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.
 
 = 4.0.0 =
 * Drop SOAP API support.
